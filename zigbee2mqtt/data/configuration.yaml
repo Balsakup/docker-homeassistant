@@ -1,0 +1,13 @@
+version: 4
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://mqtt
+  user: mosquitto
+  password: changeme
+serial:
+  port: /dev/ttyACM0
+  adapter: ember
+frontend:
+  enabled: true
+homeassistant:
+  enabled: true

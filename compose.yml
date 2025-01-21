@@ -1,0 +1,59 @@
+services:
+  mqtt:
+    build:
+      context: mosquitto
+      dockerfile: Dockerfile
+      args:
+        MOSQUITTO_VERSION: "${MOSQUITTO_VERSION}"
+        UID: "${UID}"
+        GID: "${GID}"
+    restart: unless-stopped
+    user: "${UID}:${GID}"
+    environment:
+      MOSQUITTO_PASSWORD: "${MOSQUITTO_PASSWORD}"
+    volumes:
+      - './mosquitto/docker-entrypoint.sh:/docker-entrypoint.sh'
+      - './mosquitto/config:/mosquitto/config'
+      - './mosquitto/data:/mosquitto/data'
+  zigbee2mqtt:
+    build:
+      context: zigbee2mqtt
+      dockerfile: Dockerfile
+      args:
+        ZIGBEE2MQTT_VERSION: "${ZIGBEE2MQTT_VERSION}"
+        UID: "${UID}"
+        GID: "${GID}"
+    restart: unless-stopped
+    depends_on:
+      - mqtt
+    user: "${UID}:${GID}"
+    group_add:
+      - dialout
+    environment:
+      TZ: Europe/Paris
+      MOSQUITTO_PASSWORD: "${MOSQUITTO_PASSWORD}"
+    ports:
+      - 8080:8080
+    volumes:
+      - './zigbee2mqtt/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh'
+      - './zigbee2mqtt/data:/app/data'
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+  homeassistant:
+    build:
+      context: homeassistant
+      dockerfile: Dockerfile
+      args:
+        HOMEASSISTANT_VERSION: "${HOMEASSISTANT_VERSION}"
+        UID: "${UID}"
+        GID: "${GID}"
+    restart: unless-stopped
+    depends_on:
+      - zigbee2mqtt
+    user: "${UID}:${GID}"
+    environment:
+      TZ: Europe/Paris
+    ports:
+      - "${HOMEASSISTANT_FORWARD_PORT:-8123}:8123"
+    volumes:
+      - './homeassistant/config:/config'

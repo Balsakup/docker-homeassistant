@@ -1,0 +1,38 @@
+version: '3'
+
+vars:
+  COMPOSE: "docker compose"
+
+env:
+  UID:
+    sh: id -u
+  GID:
+    sh: id -g
+
+dotenv: ['.env']
+
+tasks:
+  start:
+    cmds:
+      - "{{.COMPOSE}} up --build"
+  stop:
+    cmds:
+      - "{{.COMPOSE}} down"
+  shell-mqtt:
+    cmds:
+      - "{{.COMPOSE}} exec -it mqtt sh"
+  root-shell-mqtt:
+    cmds:
+      - "{{.COMPOSE}} exec -u root -it mqtt sh"
+  shell-zigbee2mqtt:
+    cmds:
+      - "{{.COMPOSE}} exec -it zigbee2mqtt sh"
+  root-shell-zigbee2mqtt:
+    cmds:
+      - "{{.COMPOSE}} exec -u root -it zigbee2mqtt sh"
+  shell-homeassistant:
+    cmds:
+      - "{{.COMPOSE}} exec -it homeassistant sh"
+  root-shell-homeassistant:
+    cmds:
+      - "{{.COMPOSE}} exec -u root -it homeassistant sh"
