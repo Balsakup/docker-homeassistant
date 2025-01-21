@@ -14,7 +14,7 @@ dotenv: ['.env']
 tasks:
   start:
     cmds:
-      - "{{.COMPOSE}} up --build"
+      - "{{.COMPOSE}} up --build -d"
   stop:
     cmds:
       - "{{.COMPOSE}} down"
