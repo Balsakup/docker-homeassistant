@@ -53,6 +53,7 @@ services:
     user: "${UID}:${GID}"
     environment:
       TZ: Europe/Paris
+      PYTHONUSERBASE: /config/deps
     ports:
       - "${HOMEASSISTANT_FORWARD_PORT:-8123}:8123"
     volumes:
